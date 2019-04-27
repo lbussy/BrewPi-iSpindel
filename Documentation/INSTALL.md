@@ -1,21 +1,22 @@
-#   Installation information for iSpindel to BrewPi Remix integration   ###
+#   Installation information
+## iSpindel to BrewPi Remix Integration
 
-2. - Install numpy with 'sudo apt-get install python-numpy'
-3. - Copy the files/folders fro WWW into the /var/www/html folder
-4. - Copy the files in Scripts into the /home/brewpi folder.
-5. - Edit ispindel.py as needed - For testing I also have CSV and Ubidots ON in this version. Add your UBI token
-6. - Run the following commands:
+1. - Install numpy with 'sudo apt-get install python-numpy'
+2. - Copy the files/folders fro WWW into the /var/www/html folder
+3. - Copy the files in Scripts into the /home/brewpi folder.
+4. - Edit ispindel.py as needed - For testing I also have CSV and Ubidots ON in this version. Add your UBI token
+5. - Run the following commands:
 
     cd /home/brewpi
-	sudo mv ./ispindle-srv /etc/init.d
-	sudo chmod 755 /home/brewpi/iSpindle.py
-	sudo chmod 755 /etc/init.d/ispindle-srv
-	cd /etc/init.d
-	sudo systemctl daemon-reload
-	sudo insserv ispindle-srv
-	sudo service ispindle-srv start
+    sudo mv ./ispindle-srv /etc/init.d
+    sudo chmod 755 /home/brewpi/iSpindle.py
+    sudo chmod 755 /etc/init.d/ispindle-srv
+    cd /etc/init.d
+    sudo systemctl daemon-reload
+    sudo insserv ispindle-srv
+    sudo service ispindle-srv start
 
-Now, test the iSpindel connection - go into iSpindel config mode, set it to use TCP connection and insert the IP of your BrewPI as well as port number 9501. If sucessful you will start to see data logged in the /var/www/html/data/iSpindel folder. One CSV with all data, another with just the most recent reading.  The full CSV is for testing and can be disabled in iSpindel.py, the single is what BrewPI pulls in.  For testing you may want to change the reporting frequency (on the iSpindel) to 30 seconds or similar.
+Now, test the iSpindel connection - go into iSpindel config mode, set it to use TCP connection and insert the IP of your BrewPI as well as port number 9501. If successful you will start to see data logged in the /var/www/html/data/iSpindel folder. One CSV with all data, another with just the most recent reading.  The full CSV is for testing and can be disabled in iSpindel.py, the single is what BrewPi pulls in.  For testing you may want to change the reporting frequency (on the iSpindel) to 30 seconds or similar.
 
 Once all files are in place and the iSpindel is logging data to the server, stop and restart the BrewPI script.  This will make sure the web interface and the script in the back are using the new versions. 
 
@@ -31,5 +32,5 @@ Known issues:
 
 Most important make sure you are backed up because this is only tested by me so far, I am not a programmer and figuring it out as I go! .I also built it on a Debian VM not a Raspberry PI install so it's possible there may be some missing dependencies  Any issues again add an issue on GitHub.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE2NDQzNjU0NV19
+eyJoaXN0b3J5IjpbMjExMTE0MjM4MV19
 -->
