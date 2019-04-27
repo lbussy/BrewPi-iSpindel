@@ -2,12 +2,10 @@
 # Greg Masem - ispindel@mas321.com
 # 
 # This processes the data coming from the iSpindel and averages/cleans it.
-# It will store data as CSV
-# It will output the data to a location for BrePI script to pull in when datapoits saved.   
-# 
-# 
-#  
-#          
+# It will store data as CSV.
+#
+# It will output the data to a location for BrewPi script to pull in when
+# data points are saved.   
 
 import sys
 import datetime
@@ -26,7 +24,7 @@ import ConfigParser
 
 
 def getValue():
-        """Returns the latest temperature, batt & gravity values of the  Hydrometer""" 
+        """Returns the latest temperature, battery level & gravity values of the Hydrometer""" 
 
 	ispindelreading = genfromtxt("/var/www/html/data/iSpindel/SpinData.csv", delimiter = ',')
 	return ispindelreading

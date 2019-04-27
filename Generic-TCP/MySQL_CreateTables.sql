@@ -10,7 +10,7 @@ CREATE TABLE `Data` (
 	PRIMARY KEY (`Timestamp`, `Name`, `ID`)
 	) 
 ENGINE=InnoDB DEFAULT CHARSET=ascii 
-COLLATE=ascii_bin COMMENT='iSpindle Data';
+COLLATE=ascii_bin COMMENT='iSpindel Data';
 
 CREATE TABLE `Calibration` (
     `ID` varchar(64) COLLATE ascii_bin NOT NULL,
@@ -20,4 +20,4 @@ CREATE TABLE `Calibration` (
     PRIMARY KEY (`ID`)
 ) 
 ENGINE=InnoDB DEFAULT CHARSET=ascii 
-COLLATE=ascii_bin COMMENT='iSpindle Calibration Data';
+COLLATE=ascii_bin COMMENT='iSpindel Calibration Data';
