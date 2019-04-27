@@ -1,380 +1,134 @@
 
-# Installation Guide for Raspbian 
-### Step-by-Step
+# genericTCP
+#### (iSpindle.py Version 1.0.0)
+
+[Install Instructions](INSTALL.md)      
+[Charts](web/README.md)
+
+NOTE: If you are updating from Firmware < 5.x please see [Install Instructions](INSTALL.md).
+
+This script was written in Python and its purpose is to accept raw data from an iSpindle via a generic TCP connection, usually in a local network environment.
+It purposely avoids unneccessary higher-level protocols such as http, in order to maximize the battery lifetime of the iSpindle and generally make things more easy and transparent, also for you fellow developers out there.
+
+The data received can be stored (or forwarded) in three different ways, non exclusively.    
+You can enable or disable them separately, one by one.   
+One option is to save incoming data to a CSV (comma separated values) file, one per iSpindle.
+This might be useful for example to do a quick import in Excel.   
+The second one allows you to write it to a MySQL table.   
+And finally, in order to get the best out of two worlds and not have to say goodbye to Ubidots, you can configure the script to foward it all transparently, so Ubidots won't even know it's not connected directly to your iSpindle, with the added advantage of being able to also process your data locally, so, for example, you could come up with some new super nice way to calibrate it.   
+
+In addition, the time your iSpindle has to wait for a connection will decrease, further enhancing its battery life.   
+But even without Internet access, you'll be able to process the data your iSpindle sends.
+
+The script is completely platform independent and should run on any OS that supports Python.
+It has been tested on Mac OS X (Sierra) and Linux (Debian), but it should work under Windows just as well.
+If you own or have rented a dedicated or virtual server, or if there is any computer in your home network that is running 24/7, this should work for you.    
+A Raspberry Pi will always do the trick.
+Just make sure you have Python installed, and if you are using the MySQL feature, don't forget to install the `python-mysql.connector`, too.
+Multithreading is implemented, so even if your multiple iSpindles send their data at the same time, there should be no delays or other problems during the transmission.
+
+When configuring your iSpindle, choose **TCP** as protocol, enter the IP address of the server the script is running on, and enter **9501** as TCP port (which is the default port the script will listen to).
+
+Then, configure the script by opening it in a text editor.
+Make sure you adjust all the settings according to the descriptions following below.
+
+Finally, copy it to some path on your server. If using a Raspi, good choices would be `/usr/local/bin` or simply `/home/pi`.
+
+Make it executable by typing `chmod 755 iSpindle.py` on the command line inside the path you've chosen.
+Then start it by typing `./iSpindle.py`.
+Alternatively (or when using Windows), you can start it by typing `python iSpindle.py`.    
+Once it all works, set DEBUG to 0, restart it in the background and enjoy.
 
 
-### Update to Firmware 5.x:
-If you already have this running and want to update to the new firmware, you'll need to add a new column to the Data table:
+### Configuration:
 
-	USE iSpindle;
-	ALTER TABLE Data ADD Gravity double NOT NULL DEFAULT 0;
+#### General:
 
-This is already taken into account if you newly install this and follow the instructions below.
+	DEBUG = 0      
+	PORT = 9501    
+	HOST = '0.0.0.0'
 
-### Update for Resetflag for charts:
-To use the charts with the parameter Resetflag, you'll need to add a new column to the Data table:
+**DEBUG** = 1 allows detailed output on the console.
+You'll want this when first configuring the script and your iSpindle.
+After that, not so much, probably.   
+If TCP **Port** is already in use (unlikely), you can change it here to another value.   
+**HOST** determines the IP range clients have to be in in order to be allowed to connect. Leave this at 0.0.0.0 for no restrictions.
+Port 9501 is usually not reachable from the (potentially hostile) outside unless you are explicitly forwarding it through your router (firewall settings: port forwarding), so, no worries there, usually.
+And if you've read this far, you'll probably know what you're doing, anyway... ;)
 
-	USE iSpindle;
-	ALTER TABLE Data ADD ResetFlag boolean;
+#### CSV:
 
-This is already taken into account if you newly install this and follow the instructions below.
+	CSV = 0
+	OUTPATH = '/home/pi/iSpindel'
+	DELIMITER = ';'
+	NEWLINE = '\r\n'
+	DATETIME = 1    
 
-### Preliminary Remarks:
-
-These recommended software requirements might seem like overkill, but this solution is highly flexible and wide open for future enhancements.    
-Most Raspberry owners will use Raspbian, but you should be able to get this to work just fine under any other Linux based distribution.    
-Of course you can use slimmer solutions for the database and the web server.    
-I am using MySQL and Apache because they're quite standard and there's a lot of potential for future development.    
-The whole install will use roughly 5 GB on the sd card, so a 8 GB one should suffice, 16 GB being just perfect.
-If you don't need phpmyadmin and the visualization charts you can safely omit both mySql and Apache, of course.
-
-### Prepare Raspbian 
-- raspi-config: activate ssh, establish network connection (via Ethernet or WiFi). You'll probably need a keyboard and an HDMI capable display for this step. Or you create an empty file called "ssh" in the boot directory of the SD card prior to booting the Raspi from it.
-- connect via putty (Windows) or Terminal and SSH (Mac OS X, Linux):
-```           
-   ssh pi@[ip-address or hostname] 
-   Password: raspberry (change this)
-```
-Update your system:
-
-	sudo apt-get update
-	sudo apt-get dist-upgrade
-
-### MySQL, Apache2 and phpMyAdmin database GUI 
-
-#### Install:
-
-	sudo apt-get install apache2 mysql-server mysql-client php5-mysql python-mysql.connector
-
-When asked, choose a password for the database admin account.
-
-	sudo apt-get install phpmyadmin
-
-When asked, choose Apache2 as web server, and enter the database root user's password (as above).
-MySQL is now managable through http://[myraspi]/phpmyadmin.
-
-You can now complete the following steps either by using phpmyadmin (logging in as root, then click on the "SQL" tab) or directly in mysql via command line:
-
-	mysql -u root -p
-
-You'll have to enter the root user's password again.    
-Now you should see a **mysql>** prompt.
-
-#### Create and Select the Database:
-	CREATE DATABASE iSpindle;
-	USE iSpindle;
-
-#### Create Tables:
-
-If you wish to use the charts with density calibration, you should create both tables now.    
-[Here](./MySQL_CreateTables.sql) you can find scripts with both definitions.
-Otherwise, the main data table will suffice:
-
-	CREATE TABLE `Data` (
- 		`Timestamp` datetime NOT NULL,
- 		`Name` varchar(64) COLLATE ascii_bin NOT NULL,
- 		`ID` varchar(64) COLLATE ascii_bin NOT NULL,
- 		`Angle` double NOT NULL,
- 		`Temperature` double NOT NULL,
- 		`Battery` double NOT NULL,
-		`ResetFlag` boolean,
-		`Gravity` double NOT NULL DEFAULT 0,
- 	PRIMARY KEY (`Timestamp`,`Name`,`ID`)
-	) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_bin COMMENT='iSpindle Data';
-
-The field "ID" stores the iSpindle's unique hardware ID, which we'll need in order to use calibration.
-
-	CREATE TABLE `Calibration` (
-		`ID` varchar(64) COLLATE ascii_bin NOT NULL,
-		`const1` double NOT NULL,
-		`const2` double NOT NULL,
-		`const3` double NOT NULL,
-		PRIMARY KEY (`ID`)
-		) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_bin COMMENT='iSpindle Calibration Data';
-
-#### Create a Database User, Grant Permissions, Set Password):
-
-	CREATE USER 'iSpindle' IDENTIFIED BY 'password';
-	GRANT USAGE ON *.* TO 'iSpindle';
-	GRANT ALL PRIVILEGES ON `iSpindle`.* TO 'iSpindle' WITH GRANT OPTION;
-
-Now the database is accessible by the Python server script.    
-Configure it as explained here: [README](./README_en.md).
-See section below on how to install it.
+Set **CSV** to 1 if you want CSV files to be generated.    
+**OUTPATH** configures the path CSV files will be stored at. Share it in your local network to allow easy import for Excel or whatever frontend you want to use.    
+**DELIMITER** sets the character to be used to separate the data fields. ';' is usually good for Excel. Common choices would be ',' or ';'.    
+**NEWLINE** is normally '\n', but if you're using anything made by Microsoft, use '\n\r'.    
+**DATETIME** should be left at its default setting of 1, unless for some reason you don't want timestamps being added to the data output.
 
 
-### Optional: Install Samba (Recommended):
+#### MySQL
 
-	sudo apt-get install samba samba-common-bin
-
-#### Share pi User's Home Directory and Log Files:
-
-/etc/samba/smb.conf:
-
-	[global]
- 	server string = RASPBIAN
- 	guest ok = yes
- 	security = user
- 	socket options = TCP_NODELAY SO_RCVBUF=65535 SO_SNDBUF=65535
- 	registry shares = yes
- 	syslog = 0
- 	map to guest = bad user
- 	workgroup = WORKGROUP
- 	bind interfaces only = No
- 	encrypt passwords = true
- 	log level = 0
-	# smb ports = 445
- 	unix extensions = No
- 	wide links = yes
-
- 	include = /etc/samba/user.conf
- 	include = /etc/samba/shares.conf
+	SQL = 1
+	SQL_HOST = '127.0.0.1'
+	SQL_DB = 'iSpindle'
+	SQL_TABLE = 'Data'
+	SQL_USER = 'iSpindle'
+	SQL_PASSWORD = 'xxxxxxxx'
 
 
-/etc/samba/shares.conf:
+If you want to switch off MySQL connectivity, set **SQL** to 0 and all other settings will be ignored.     
+**SQL\_HOST** defines the DB host's IP address. Usually, this will be 'localhost' or 127.0.0.1.    
+The remaining fields define the connection to the database.    
+By default, we assume the database name and user ID are 'iSpindle', and the table name is 'Data'.
 
-	[pi-home]
-    	path = /home/pi
-    	guest ok = yes
-    	read only = no
-    	force user = pi
-    	browseable = yes
+In order to create a table inside your MySQL database accordingly, use this SQL statement:
 
-	[system-logs]
-    	path = /var/log
-    	guest ok = yes
-    	read only = yes
-    	force user = root
-    	browseable = yes
+	CREATE TABLE 'Data' (
+		'Timestamp' datetime NOT NULL,
+		'Name' varchar(64) COLLATE ascii_bin NOT NULL,
+		'ID' varchar(64) COLLATE ascii_bin NOT NULL,
+		'Angle' double NOT NULL,
+		'Temperature' double NOT NULL,
+		'Battery' double NOT NULL,
+		'ResetFlag' boolean,
+		'Gravity' double NOT NULL,
+		PRIMARY KEY ('Timestamp', 'Name', 'ID')
+	) 
+	ENGINE=InnoDB DEFAULT CHARSET=ascii 
+	COLLATE=ascii_bin COMMENT='iSpindle Data';
 
-#### Start Samba Daemon:
+Of course you could always just log in to the database using your default admin account, but a better solution is to create a dedicated user for the server script:
 
-	sudo insserv smbd
-	sudo service smbd start
+	CREATE USER 'iSpindle'@'localhost' IDENTIFIED BY 'password';
+	GRANT ALL PRIVILEGES ON iSpindle . * TO 'iSpindle'@'localhost';
+	FLUSH PRIVILEGES;
 
-The pi user's home and system log directories are now being shared and you should be able to see them in Explorer/Finder.
+The script is able to create additional table columns dynamically from the received JSON dataset.    
+This is, however, only recommended if you are developing your own firmware and wish to store some variables not being exported by default.
+If your server is reachable from the Internet, make sure **ENABLE\_ADDCOLS** is 0.
+In its current version I cannot guarantee the script is not vulnerable to SQL Injection attacks when this is enabled (set to 1).
+If unsure, set it to 0.
 
-### Install the Python Server Script for genericTCP:
-Configure the script as explained here: [README](./README_en.md).
-If you're not too familiar with Unix and the shell, you could follow this guide below:
 
-Copy both iSpindle.py and ispindle-serv to the pi home directory.
-Then, within the SSH terminal session, type:
+#### Ubidots Forwarding
 
-    cd /home/pi
-    sudo mv ./iSpindle.py /usr/local/bin
-	sudo mv ./ispindle-srv /etc/init.d
-	sudo chmod 755 /usr/local/bin/iSpindle.py
-	sudo chmod 755 /etc/init.d/ispindle-srv
-	cd /etc/init.d
-	sudo systemctl daemon-reload
-	sudo insserv ispindle-srv
-	sudo service ispindle-srv start
+	UBIDOTS = 1
+	UBI_TOKEN = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 
-Now would be a good time to reboot the Raspi (should not be required, though).    
-You should be able to see the script running now:
+**UBIDOTS** = 0 will switch off Ubidots Forwarding.    
+**UBI\_TOKEN** is where you enter your personal Ubidots Token (see iSpindle docs).
 
-    ps -ax | grep iSpindle
+Your data should now show up in Ubidots as usual, plus you have it available locally to fiddle around with.    
+Ubidots will not know the difference and even create new devices just as well.
 
-Done.
-If everything is configured correctly, the database should receive the iSpindle data and your device(s) should show up in Ubidots, if you have enabled forwarding.    
-[Here](web/README_en.md) are some charts I made for visualization I found essential.    
-
-Have fun!
-
-Yours,
+Have Fun!    
 Tozzi (stephan@sschreiber.de)
-
-
-# Installation Guide for Raspbian 
-### Step-by-Step
-
-
-### Update to Firmware 5.x:
-If you already have this running and want to update to the new firmware, you'll need to add a new column to the Data table:
-
-	USE iSpindle;
-	ALTER TABLE Data ADD Gravity double NOT NULL DEFAULT 0;
-
-This is already taken into account if you newly install this and follow the instructions below.
-
-### Update for Resetflag for charts:
-To use the charts with the parameter Resetflag, you'll need to add a new column to the Data table:
-
-	USE iSpindle;
-	ALTER TABLE Data ADD ResetFlag boolean;
-
-This is already taken into account if you newly install this and follow the instructions below.
-
-### Preliminary Remarks:
-
-These recommended software requirements might seem like overkill, but this solution is highly flexible and wide open for future enhancements.    
-Most Raspberry owners will use Raspbian, but you should be able to get this to work just fine under any other Linux based distribution.    
-Of course you can use slimmer solutions for the database and the web server.    
-I am using MySQL and Apache because they're quite standard and there's a lot of potential for future development.    
-The whole install will use roughly 5 GB on the sd card, so a 8 GB one should suffice, 16 GB being just perfect.
-If you don't need phpmyadmin and the visualization charts you can safely omit both mySql and Apache, of course.
-
-### Prepare Raspbian 
-- raspi-config: activate ssh, establish network connection (via Ethernet or WiFi). You'll probably need a keyboard and an HDMI capable display for this step. Or you create an empty file called "ssh" in the boot directory of the SD card prior to booting the Raspi from it.
-- connect via putty (Windows) or Terminal and SSH (Mac OS X, Linux):
-```           
-   ssh pi@[ip-address or hostname] 
-   Password: raspberry (change this)
-```
-Update your system:
-
-	sudo apt-get update
-	sudo apt-get dist-upgrade
-
-### MySQL, Apache2 and phpMyAdmin database GUI 
-
-#### Install:
-
-	sudo apt-get install apache2 mysql-server mysql-client php5-mysql python-mysql.connector
-
-When asked, choose a password for the database admin account.
-
-	sudo apt-get install phpmyadmin
-
-When asked, choose Apache2 as web server, and enter the database root user's password (as above).
-MySQL is now managable through http://[myraspi]/phpmyadmin.
-
-You can now complete the following steps either by using phpmyadmin (logging in as root, then click on the "SQL" tab) or directly in mysql via command line:
-
-	mysql -u root -p
-
-You'll have to enter the root user's password again.    
-Now you should see a **mysql>** prompt.
-
-#### Create and Select the Database:
-	CREATE DATABASE iSpindle;
-	USE iSpindle;
-
-#### Create Tables:
-
-If you wish to use the charts with density calibration, you should create both tables now.    
-[Here](./MySQL_CreateTables.sql) you can find scripts with both definitions.
-Otherwise, the main data table will suffice:
-
-	CREATE TABLE `Data` (
- 		`Timestamp` datetime NOT NULL,
- 		`Name` varchar(64) COLLATE ascii_bin NOT NULL,
- 		`ID` varchar(64) COLLATE ascii_bin NOT NULL,
- 		`Angle` double NOT NULL,
- 		`Temperature` double NOT NULL,
- 		`Battery` double NOT NULL,
-		`ResetFlag` boolean,
-		`Gravity` double NOT NULL DEFAULT 0,
- 	PRIMARY KEY (`Timestamp`,`Name`,`ID`)
-	) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_bin COMMENT='iSpindle Data';
-
-The field "ID" stores the iSpindle's unique hardware ID, which we'll need in order to use calibration.
-
-	CREATE TABLE `Calibration` (
-		`ID` varchar(64) COLLATE ascii_bin NOT NULL,
-		`const1` double NOT NULL,
-		`const2` double NOT NULL,
-		`const3` double NOT NULL,
-		PRIMARY KEY (`ID`)
-		) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_bin COMMENT='iSpindle Calibration Data';
-
-#### Create a Database User, Grant Permissions, Set Password):
-
-	CREATE USER 'iSpindle' IDENTIFIED BY 'password';
-	GRANT USAGE ON *.* TO 'iSpindle';
-	GRANT ALL PRIVILEGES ON `iSpindle`.* TO 'iSpindle' WITH GRANT OPTION;
-
-Now the database is accessible by the Python server script.    
-Configure it as explained here: [README](./README_en.md).
-See section below on how to install it.
-
-
-### Optional: Install Samba (Recommended):
-
-	sudo apt-get install samba samba-common-bin
-
-#### Share pi User's Home Directory and Log Files:
-
-/etc/samba/smb.conf:
-
-	[global]
- 	server string = RASPBIAN
- 	guest ok = yes
- 	security = user
- 	socket options = TCP_NODELAY SO_RCVBUF=65535 SO_SNDBUF=65535
- 	registry shares = yes
- 	syslog = 0
- 	map to guest = bad user
- 	workgroup = WORKGROUP
- 	bind interfaces only = No
- 	encrypt passwords = true
- 	log level = 0
-	# smb ports = 445
- 	unix extensions = No
- 	wide links = yes
-
- 	include = /etc/samba/user.conf
- 	include = /etc/samba/shares.conf
-
-
-/etc/samba/shares.conf:
-
-	[pi-home]
-    	path = /home/pi
-    	guest ok = yes
-    	read only = no
-    	force user = pi
-    	browseable = yes
-
-	[system-logs]
-    	path = /var/log
-    	guest ok = yes
-    	read only = yes
-    	force user = root
-    	browseable = yes
-
-#### Start Samba Daemon:
-
-	sudo insserv smbd
-	sudo service smbd start
-
-The pi user's home and system log directories are now being shared and you should be able to see them in Explorer/Finder.
-
-### Install the Python Server Script for genericTCP:
-Configure the script as explained here: [README](./README_en.md).
-If you're not too familiar with Unix and the shell, you could follow this guide below:
-
-Copy both iSpindle.py and ispindle-serv to the pi home directory.
-Then, within the SSH terminal session, type:
-
-    cd /home/pi
-    sudo mv ./iSpindle.py /usr/local/bin
-	sudo mv ./ispindle-srv /etc/init.d
-	sudo chmod 755 /usr/local/bin/iSpindle.py
-	sudo chmod 755 /etc/init.d/ispindle-srv
-	cd /etc/init.d
-	sudo systemctl daemon-reload
-	sudo insserv ispindle-srv
-	sudo service ispindle-srv start
-
-Now would be a good time to reboot the Raspi (should not be required, though).    
-You should be able to see the script running now:
-
-    ps -ax | grep iSpindle
-
-Done.
-If everything is configured correctly, the database should receive the iSpindle data and your device(s) should show up in Ubidots, if you have enabled forwarding.    
-[Here](web/README_en.md) are some charts I made for visualization I found essential.    
-
-Have fun!
-
-Yours,
-Tozzi (stephan@sschreiber.de)
-
-
-
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM4ODA0Mzk0OF19
+eyJoaXN0b3J5IjpbMjA3OTk5MzgwXX0=
 -->
