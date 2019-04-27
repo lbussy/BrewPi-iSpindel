@@ -1,5 +1,5 @@
 
-# Charts From Local Server 
+# Charts From Local Server
 
 While exporting CSVs or directly accessing the database via ODBC from, for example, Excel, is fine for data analysis, we'll definitely also want a quick way to take a glance at the current fermentation.
 So, here are a few essential charts, developed using [highcharts](http://www.highcharts.com), browser accessible.
@@ -27,9 +27,8 @@ reset_now defines a timestamp (start of fermentation) and the graph shows only t
 * http://meinraspi/iSpindle/angle.php?name=MeineSpindel2&reset=true
 
 I hope I've built sort of a foundation with templates for lots of future enhancements.
-I am aware that there's probably a ton of things I could have solved more elegantly and there's room for improvement galore.     
+I am aware that there's probably a ton of things I could have solved more elegantly and there's room for improvement galore.
 Contributions are by all means welcome. Looking forward!
-
 
 ### A Few Hints Regarding Installation:
 #### Apache2:
@@ -50,12 +49,12 @@ You'll need to configure the database connection, found in include/common_db.php
       define('DB_PASSWORD',"password");
 
 #### Calibration (Angle:Gravity)
-Note: This is deprecated as per firmware 5.0.1.      
-The iSpindle now has its own algorithm for density/gravity output.      
-The following applies if you are still using an older firmware version.      
+Note: This is deprecated as per firmware 5.0.1.
+The iSpindle now has its own algorithm for density/gravity output.
+The following applies if you are still using an older firmware version.
 
-Before you can use plato4.php to display the calculated gravity (%w/w) in Plato degrees, you'll need enter the [calibration results](../../../docs/Calibration.md) and add them to the database.      
-The reference being used is the spindle's unique hardware id, stored as "ID" in the 'Data' table.    
+Before you can use plato4.php to display the calculated gravity (%w/w) in Plato degrees, you'll need enter the [calibration results](https://github.com/lbussy/iSpindel/blob/master/docs/Calibration_en.md) and add them to the database.
+The reference being used is the spindle's unique hardware id, stored as "ID" in the 'Data' table.
 First, if you haven't done that before, you'll need to create a second table now:
      
      CREATE TABLE `Calibration` (
@@ -78,7 +77,7 @@ You could enter these using phpMyAdmin, or on a mysql prompt, you'd do:
     INSERT INTO Calibration (ID, const1, const2, const3)
     VALUES ('123456', 0.013355798, 0.776391729, 11.34675255);
 
-Have Fun,     
+Have Fun,
 Tozzi (stephan@sschreiber.de)
 
 <!--stackedit_data:
