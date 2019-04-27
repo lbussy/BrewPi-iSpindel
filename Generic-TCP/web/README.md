@@ -4,7 +4,7 @@ While exporting CSVs or directly accessing the database via ODBC from, for examp
 So, here are a few essential charts, developed using [highcharts](http://www.highcharts.com), browser accessible.
 Especially nice in Firefox fullscreen mode on a Raspi touch display. Just put some bookmarks on the Raspi Desktop.
 
-We'll need a working [install](../INSTALL_en.md) of the backend, including mySQL and Apache2.
+We'll need a working [install](../INSTALL.md) of the backend, including mySQL and Apache2.
 
 My goal was to implement a solution as simple yet effective as possible.
 
@@ -53,7 +53,7 @@ Note: This is deprecated as per firmware 5.0.1.
 The iSpindle now has its own algorithm for density/gravity output.      
 The following applies if you are still using an older firmware version.      
 
-Before you can use plato4.php to display the calculated gravity (%w/w) in Plato degrees, you'll need enter the [calibration results](../../../docs/Calibration_en.md) and add them to the database.      
+Before you can use plato4.php to display the calculated gravity (%w/w) in Plato degrees, you'll need enter the [calibration results](../../../docs/Calibration.md) and add them to the database.      
 The reference being used is the spindle's unique hardware id, stored as "ID" in the 'Data' table.    
 First, if you haven't done that before, you'll need to create a second table now:
      
