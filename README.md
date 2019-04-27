@@ -3,13 +3,7 @@
 
 *[@LBussy](https://github.com/lbussy)'s fork of the original [**BrewPi-iSpindel**](https://github.com/NFBrewingTech/BrewPi-iSpindel) Project.*
 
-Integrating the iSpindel (iSpindle) into BrewPi
-
-First brew sesion went very well.   Logging needs adjustment (log less data-faster graphing) but works!   
-
-Install info is in the Documentation folder. Most of the files are ready to go as-is, and are a drop in replacement for the current version of a legacy branch installation.
-
-I will be making some adjustments after this brew finishes. Couple things I want to add is a running ABV calculation, OG display, password protected/web portal version, any other ideas PLEASE ask!
+This GitHub contains modifications and supplemental files to support the iSpindel Hydrometer in BrewPi Remix.  This is in no way a working repository meant for end users.  It's merely a jumping-off place for my work.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMzg5MzgzNTU4XX0=
+eyJoaXN0b3J5IjpbMzM4MTE2NzAwXX0=
 -->
