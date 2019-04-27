@@ -98,7 +98,7 @@ The field "ID" stores the iSpindle's unique hardware ID, which we'll need in ord
 	GRANT ALL PRIVILEGES ON `iSpindle`.* TO 'iSpindle' WITH GRANT OPTION;
 
 Now the database is accessible by the Python server script.    
-Configure it as explained here: [README](./README_en.md).
+Configure it as explained here: [README](./README.md).
 See section below on how to install it.
 
 
@@ -154,7 +154,7 @@ See section below on how to install it.
 The pi user's home and system log directories are now being shared and you should be able to see them in Explorer/Finder.
 
 ### Install the Python Server Script for genericTCP:
-Configure the script as explained here: [README](./README_en.md).
+Configure the script as explained here: [README](./README.md).
 If you're not too familiar with Unix and the shell, you could follow this guide below:
 
 Copy both iSpindle.py and ispindle-serv to the pi home directory.
@@ -177,12 +177,9 @@ You should be able to see the script running now:
 
 Done.
 If everything is configured correctly, the database should receive the iSpindle data and your device(s) should show up in Ubidots, if you have enabled forwarding.    
-[Here](web/README_en.md) are some charts I made for visualization I found essential.    
+[Here](web/README.md) are some charts I made for visualization I found essential.    
 
 Have fun!
 
 Yours,
 Tozzi (stephan@sschreiber.de)
-
-
-
