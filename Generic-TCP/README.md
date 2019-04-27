@@ -1,10 +1,10 @@
 # genericTCP
 #### (iSpindle.py Version 1.0.0)
 
-[Install Instructions](INSTALL_en.md)      
-[Charts](web/README_en.md)
+[Install Instructions](INSTALL.md)      
+[Charts](web/README.md)
 
-NOTE: If you are updating from Firmware < 5.x please see [Install Instructions](INSTALLn.md).
+NOTE: If you are updating from Firmware < 5.x please see [Install Instructions](INSTALL.md).
 
 This script was written in Python and its purpose is to accept raw data from an iSpindle via a generic TCP connection, usually in a local network environment.
 It purposely avoids unneccessary higher-level protocols such as http, in order to maximize the battery lifetime of the iSpindle and generally make things more easy and transparent, also for you fellow developers out there.
