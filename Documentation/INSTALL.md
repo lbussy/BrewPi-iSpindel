@@ -1,11 +1,11 @@
 #   Installation information
 ## iSpindel to BrewPi Remix Integration
 
-1. - Install numpy with 'sudo apt-get install python-numpy'
-2. - Copy the files/folders fro WWW into the /var/www/html folder
-3. - Copy the files in Scripts into the /home/brewpi folder.
-4. - Edit ispindel.py as needed
-5. - Run the following commands:
+1. Install numpy with 'sudo apt-get install python-numpy'
+2. Copy the files/folders fro WWW into the /var/www/html folder
+3. Copy the files in Scripts into the /home/brewpi folder.
+4. Edit ispindel.py as needed
+5. Run the following commands:
 
 ```
 cd /home/brewpi
@@ -30,6 +30,5 @@ Initial logging when starting new brew will be the last reading from the iSpinde
 If there are NO iSpindel readings when you start a brew the graphing won't load. On a new install make sure the iSpindel has logged a data point before starting the brew.  This is only an issue on the first run after adding the integration.
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIwMDczODIzMjYsLTEyNjcwNDY0ODhdfQ
-==
+eyJoaXN0b3J5IjpbODE4NTEyNjMxLC0xMjY3MDQ2NDg4XX0=
 -->
