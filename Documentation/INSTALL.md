@@ -18,19 +18,16 @@
 
 Now, test the iSpindel connection - go into iSpindel config mode, set it to use TCP connection and insert the IP of your BrewPI as well as port number 9501. If successful you will start to see data logged in the /var/www/html/data/iSpindel folder. One CSV with all data, another with just the most recent reading.  The full CSV is for testing and can be disabled in iSpindel.py, the single is what BrewPi pulls in.  For testing you may want to change the reporting frequency (on the iSpindel) to 30 seconds or similar.
 
-Once all files are in place and the iSpindel is logging data to the server, stop and restart the BrewPI script.  This will make sure the web interface and the script in the back are using the new versions. 
+Once all files are in place and the iSpindel is logging data to the server, stop and restart the BrewPi script.  This will make sure the web interface and the script in the back are using the new versions. 
 
-Known issues:
-	Mobile devices are taking a long time to display. This started when I enlarged the graph to allow room for additonal text.  Could be from extra logged data - plan on removing Battery and maybe Temp from graph and adding it to the header or footer as text only. Currently graphing battery to follow the battery depletion speed.
+#### Known issues:
 
-	Initial logging when starting new brew will be the last reading from the iSpindel - be that from the last brew, sitting on the table or in the new brew. 
+Mobile devices are taking a long time to display. This started when I enlarged the graph to allow room for additional text.  Could be from extra logged data - plan on removing Battery and maybe Temp from graph and adding it to the header or footer as text only. Currently graphing battery to follow the battery depletion speed.
 
-	If there are NO iSpindel readings when you start a brew the graphing won't load. On a new install make sure the iSpindel has logged a data point before starting the brew..  This is only an issue on the first run after adding the integration.
+Initial logging when starting new brew will be the last reading from the iSpindel - be that from the last brew, sitting on the table or in the new brew. 
 
-	Planning on building an install script to take care of all of the install for us. 
+If there are NO iSpindel readings when you start a brew the graphing won't load. On a new install make sure the iSpindel has logged a data point before starting the brew..  This is only an issue on the first run after adding the integration.
 
-
-Most important make sure you are backed up because this is only tested by me so far, I am not a programmer and figuring it out as I go! .I also built it on a Debian VM not a Raspberry PI install so it's possible there may be some missing dependencies  Any issues again add an issue on GitHub.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjExMTE0MjM4MV19
+eyJoaXN0b3J5IjpbLTEyNjcwNDY0ODhdfQ==
 -->
